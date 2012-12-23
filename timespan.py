@@ -162,7 +162,7 @@ r"""
 
 """
 
-from datetime import datetime
+from datetime import datetime, time
 
 
 __version__ = '0.1'
@@ -225,7 +225,9 @@ def _span(val, f):
 
 
 def _inside(x, lo, hi):
-    if hi >= lo:
+    if hi == time(0):
+        return lo <= x
+    elif hi >= lo:
         return lo <= x <= hi
     else:
         return x >= lo or x <= hi
