@@ -60,6 +60,16 @@ r"""
         >>> match(['9:00-17:00|mon-fri|*|*', '!*|*|25|dec'], dt)
         True
 
+    Determine if within any of several timespans::
+
+        >>> dt = datetime(2012, 3, 29, 12, 0)  # Thursday @ Noon
+        >>> match(['9:00-11:00|mon-fri|*|*', '13:00-17:00|mon-fri|*|*'], dt, match_any=True)
+        False
+        >>> match(['9:00-13:00|mon-fri|*|*', '14:00-17:00|mon-fri|*|*'], dt, match_any=True)
+        True
+        >>> match(['9:00-10:00|mon-fri|*|*', '11:00-17:00|mon-fri|*|*'], dt, match_any=True)
+        True
+
     Multiple timespans can be a list or newline delimited::
 
         >>> dt = datetime(2012, 12, 25, 12, 0)  # X-Mas Tuesday @ Noon
@@ -152,7 +162,7 @@ r"""
 
 """
 
-from datetime import datetime
+from datetime import datetime, time
 
 
 __version__ = '0.1'
@@ -163,17 +173,16 @@ MONTHS = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5,
           'nov': 11, 'dec': 12}
 
 
-def match(timespans, dt=None):
+def match(timespans, dt=None, match_any=False):
     """Determine if timestamp falls within one or more timespans"""
     dt = dt or datetime.now()
     if isinstance(timespans, basestring):
         timespans = timespans.splitlines()
-    for timespan in timespans:
-        if not timespan.strip():
-            continue
-        if not match_one(timespan, dt):
-            return False
-    return True
+    timespans = [ts for ts in timespans if ts.strip()]
+    if match_any:
+        return any(match_one(timespan, dt) for timespan in timespans)
+    else:
+        return all(match_one(timespan, dt) for timespan in timespans)
 
 
 def match_one(timespan, dt=None):
@@ -216,7 +225,9 @@ def _span(val, f):
 
 
 def _inside(x, lo, hi):
-    if hi >= lo:
+    if hi == time(0):
+        return lo <= x
+    elif hi >= lo:
         return lo <= x <= hi
     else:
         return x >= lo or x <= hi
