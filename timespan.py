@@ -162,6 +162,7 @@ r"""
 
 """
 
+import sys
 from datetime import datetime, time
 
 
@@ -176,7 +177,8 @@ MONTHS = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5,
 def match(timespans, dt=None, match_any=False):
     """Determine if timestamp falls within one or more timespans"""
     dt = dt or datetime.now()
-    if isinstance(timespans, basestring):
+    strtype = str if sys.version_info[0] >= 3 else basestring
+    if isinstance(timespans, strtype):
         timespans = timespans.splitlines()
     timespans = [ts for ts in timespans if ts.strip()]
     if match_any:

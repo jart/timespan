@@ -1,4 +1,5 @@
 #!python
+from __future__ import print_function
 """Bootstrap setuptools installation
 
 If you want to use setuptools in your package's setup.py, just include this
@@ -70,10 +71,9 @@ def _validate_md5(egg_name, data):
     if egg_name in md5_data:
         digest = md5(data).hexdigest()
         if digest != md5_data[egg_name]:
-            print >>sys.stderr, (
-                "md5 validation of %s failed!  (Possible download problem?)"
-                % egg_name
-            )
+            msg = "md5 validation of %s failed!  (Possible download problem?)"\
+                        % egg_name
+            print (msg, file=sys.stderr)
             sys.exit(2)
     return data
 
@@ -103,7 +103,8 @@ def use_setuptools(
         return do_download()       
     try:
         pkg_resources.require("setuptools>="+version); return
-    except pkg_resources.VersionConflict, e:
+    except pkg_resources.VersionConflict:
+        e = sys.exc_info()[1]
         if was_imported:
             print >>sys.stderr, (
             "The required version of setuptools (>=%s) is not available, and\n"
@@ -129,7 +130,11 @@ def download_setuptools(
     with a '/'). `to_dir` is the directory where the egg will be downloaded.
     `delay` is the number of seconds to pause before an actual download attempt.
     """
-    import urllib2, shutil
+    import shutil
+    try:
+        from urllib2 import urlopen
+    except:
+        from urllib.request import urlopen
     egg_name = "setuptools-%s-py%s.egg" % (version,sys.version[:3])
     url = download_base + egg_name
     saveto = os.path.join(to_dir, egg_name)
@@ -155,7 +160,7 @@ and place it in this directory before rerunning this script.)
                     version, download_base, delay, url
                 ); from time import sleep; sleep(delay)
             log.warn("Downloading %s", url)
-            src = urllib2.urlopen(url)
+            src = urlopen(url)
             # Read/write all in one block, so we don't create a corrupt file
             # if the download is interrupted.
             data = _validate_md5(egg_name, src.read())
@@ -238,8 +243,9 @@ def main(argv, version=DEFAULT_VERSION):
             from setuptools.command.easy_install import main
             main(argv)
         else:
-            print "Setuptools version",version,"or greater has been installed."
-            print '(Run "ez_setup.py -U setuptools" to reinstall or upgrade.)'
+            print("Setuptools version %s or greater has been installed."\
+                    % version)
+            print('(Run "ez_setup.py -U setuptools" to reinstall or upgrade.)')
 
 def update_md5(filenames):
     """Update our built-in md5 registry"""
@@ -251,8 +257,11 @@ def update_md5(filenames):
         f = open(name,'rb')
         md5_data[base] = md5(f.read()).hexdigest()
         f.close()
-
-    data = ["    %r: %r,\n" % it for it in md5_data.items()]
+    data = None
+    if sys.version_info[0] < 3:
+        data = ["    %r: %r,\n" % it for it in md5_data.items()]
+    else:
+        data = list("    %r: %r,\n" % it for it in md5_data.iteritems())
     data.sort()
     repl = "".join(data)
 
