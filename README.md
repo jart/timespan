@@ -71,8 +71,8 @@ Basic example:
     ]
 
     if timespan.match(business_hours, datetime.now()):
-        print "we're open for business!"
+        print("we're open for business!")
     else:
-        print "sorry, we're closed :("
+        print("sorry, we're closed :(")
 
 For more examples, see the documentation or source code.
