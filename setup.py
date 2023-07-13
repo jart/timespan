@@ -1,29 +1,22 @@
-# -*- coding: utf-8 -*-
-# http://packages.python.org/distribute/setuptools.html
-# http://diveintopython3.org/packaging.html
-# http://wiki.python.org/moin/CheeseShopTutorial
-# http://pypi.python.org/pypi?:action=list_classifiers
-
-from ez_setup import use_setuptools
-use_setuptools(version="0.6c11")
-
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name                 = "timespan",
-    version              = __import__("timespan").__version__,
-    description          = "Check if timestamp falls within specific boundaries",
-    long_description     = read("README.rst"),
+    version              = '0.2.0',
+    description          = "Utilities for Asterisk and Microsoft .Net timespans",
+    long_description     = read("README.md"),
+    long_description_content_type = 'text/markdown',
     author               = "Justine Tunney",
-    author_email         = "jtunney@lobstertech.com",
+    author_email         = "jtunney@gmail.com",
     url                  = "https://github.com/jart/timespan",
     license              = "MIT",
+    python_requires      = ">=2.7",
     install_requires     = [],
-    py_modules           = ["timespan"],
+    packages             = find_packages(include=['timespan', 'timespan.*']),
     classifiers = [
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",

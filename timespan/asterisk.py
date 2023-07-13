@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # timespan - Check if timestamps fall within specific boundaries
-# Copyright (c) 2012 Justine Alexandra Roberts Tunney
+# Copyright 2023 Justine Alexandra Roberts Tunney
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -165,8 +165,10 @@ r"""
 import sys
 from datetime import datetime, time
 
-
+__author__ = "Justine Tunney"
+__email__ = "jtunney@gmail.com"
 __version__ = '0.1'
+
 WEEKDAYS = {'mon': 0, 'tue': 1, 'wed': 2, 'thu': 3,
             'fri': 4, 'sat': 5, 'sun': 6}
 MONTHS = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5,
